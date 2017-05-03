@@ -10,6 +10,7 @@ module.exports = (app) => {
   app.post('/stories', (req, res) => {
     const newStory = new req.storyModel(Object.assign({}, req.body, { created_at: Date.now() }))
     newStory.save((err, savedStory) => {
+      if (err) console.error(err)
       res.json(savedStory)
     })
   })
@@ -18,12 +19,18 @@ module.exports = (app) => {
     const idParam = req.webtaskContext.query.id
     req.storyModel.findOne({ _id: idParam }, (err, storyToUpdate) => {
       const updatedStory = Object.assign(storyToUpdate, req.body)
-      updatedStory.save((err, story) => res.json(story))
+      updatedStory.save((err, story) => {
+        if (err) console.error(err)
+        res.json(story)
+      })
     })
   })
 
   app.delete('/stories', (req, res) => {
     const idParam = req.webtaskContext.query.id
-    req.storyModel.remove({ _id: idParam }, (err, removedStory) => res.json(removedStory))
+    req.storyModel.remove({ _id: idParam }, (err, removedStory) => {
+      if (err) console.error(err)
+      res.json(removedStory)
+    })
   })
 }
