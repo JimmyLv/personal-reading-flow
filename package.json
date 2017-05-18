@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run create -- --watch",
-    "create": "wt create index --bundle"
+    "create": "wt create index --bundle --secret MONGO_URL=mongodb://jimmylv:$MONGODB_PASSWORD@ds129031.mlab.com:29031/serverless-mern --secret GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN --secret ZENHUB_ACCESS_TOKEN=$ZENHUB_ACCESS_TOKEN"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.17.1",
+    "es6-promise": "^4.1.0",
     "express": "^4.15.2",
+    "isomorphic-fetch": "^2.2.1",
     "mongoose": "^4.9.5",
     "webtask-tools": "^3.2.0"
   }
