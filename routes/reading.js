@@ -6,7 +6,9 @@ module.exports = (app) => {
     const { GITHUB_ACCESS_TOKEN, ZENHUB_ACCESS_TOKEN } = req.webtaskContext.secrets
     const payload = JSON.parse(req.body.payload)
     const { url, html_url, number } = payload.issue
+
     console.info(`[BEGIN] issue updated with action: ${payload.action}`)
+
     if (payload.action === 'opened') {
       fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
         method: 'PATCH',
@@ -45,7 +47,7 @@ module.exports = (app) => {
     let keyword = encodeURIComponent(title.replace(/\s/g, '+'))
     console.info('[KEYWORD]', keyword)
 
-    fetch(`https://api.github.com/search/issues?q=${keyword}%20repo:jimmylv/reading`)
+    fetch(`https://api.github.com/search/issues?q=${keyword}%20repo:jimmylv/reading%20is:open`)
       .then(response => response.json())
       .then(data => {
         console.info('[RESULT]', data)
