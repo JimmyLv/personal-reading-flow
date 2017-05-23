@@ -12,9 +12,7 @@ module.exports = (app) => {
     if (payload.action === 'opened') {
       fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           milestone: 1
         })
@@ -24,9 +22,7 @@ module.exports = (app) => {
     } else if (payload.action === 'milestoned') {
       fetch(`https://api.zenhub.io/p1/repositories/91649130/issues/${number}/estimate?access_token=${ZENHUB_ACCESS_TOKEN}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           estimate: 1
         })
@@ -52,17 +48,16 @@ module.exports = (app) => {
       .then(data => {
         console.info('[RESULT]', data)
         if (data.total_count > 0) {
-          fetch(`${data.items[0].url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              state: 'closed'
+          data.items.forEach(({ url, html_url }) =>
+            fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                state: 'closed'
+              })
             })
-          })
-            .then(() => console.info(`[END] issue closed successful! ${data.items[0].html_url}`))
-            .catch(err => res.json('error', { error: err }))
+              .then(() => console.info(`[END] issue closed successful! ${html_url}`))
+              .catch(err => res.json('error', { error: err })))
         }
         res.json({ error: 'Not Found!' })
       })
