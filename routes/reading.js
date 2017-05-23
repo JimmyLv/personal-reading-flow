@@ -1,9 +1,11 @@
 require('es6-promise').polyfill()
 require('isomorphic-fetch')
 
+const REPO_ID = 91649130
+
 module.exports = (app) => {
   app.post('/reading', (req, res) => {
-    const { GITHUB_ACCESS_TOKEN, ZENHUB_ACCESS_TOKEN } = req.webtaskContext.secrets
+    const { GITHUB_ACCESS_TOKEN, ZENHUB_ACCESS_TOKEN, ZENHUB_ACCESS_TOKEN_V4 } = req.webtaskContext.secrets
     const payload = JSON.parse(req.body.payload)
     const { url, html_url, number } = payload.issue
 
@@ -20,14 +22,22 @@ module.exports = (app) => {
         .then(() => console.info(`[END] set milestone successful! ${html_url}`))
         .catch(err => res.json(err))
     } else if (payload.action === 'milestoned') {
-      fetch(`https://api.zenhub.io/p1/repositories/91649130/issues/${number}/estimate?access_token=${ZENHUB_ACCESS_TOKEN}`, {
+      fetch(`https://api.zenhub.io/p1/repositories/${REPO_ID}/issues/${number}/estimate?access_token=${ZENHUB_ACCESS_TOKEN}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           estimate: 1
         })
       })
-        .then(() => console.info(`[END] set estimate successful! ${html_url}`))
+        .then(() => {
+          console.info(`[END] set estimate successful! ${html_url}`)
+          return fetch(`https://api.zenhub.io/v4/reports/release/591dc19e81a6781f839705b9/items/issues?access_token=${ZENHUB_ACCESS_TOKEN_V4}`, {
+                         method: 'POST',
+                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                         body: `add_issues%5B0%5D%5Bissue_number%5D=${number}&add_issues%5B0%5D%5Brepo_id%5D=${REPO_ID}`
+                       })
+        })
+        .then(() => console.info(`[END] set release successful! ${html_url}`))
         .catch(err => res.json(err))
     }
 
