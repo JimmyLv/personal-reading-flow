@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run create -- --watch",
-    "create": "wt create index --bundle --secret MONGO_URL=mongodb://jimmylv:$MONGODB_PASSWORD@ds129031.mlab.com:29031/serverless-mern --secret GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN --secret ZENHUB_ACCESS_TOKEN=$ZENHUB_ACCESS_TOKEN"
+    "create": "wt create index --bundle --secret MONGO_URL=mongodb://jimmylv:$MONGODB_PASSWORD@ds129031.mlab.com:29031/serverless-mern --secret GITHUB_ACCESS_TOKEN=$GITHUB_ACCESS_TOKEN --secret ZENHUB_ACCESS_TOKEN=$ZENHUB_ACCESS_TOKEN --secret ZENHUB_ACCESS_TOKEN_V4=$ZENHUB_ACCESS_TOKEN_V4"
   },
   "author": "",
   "license": "MIT",
