@@ -31,11 +31,12 @@ module.exports = (app) => {
       })
         .then(() => {
           console.info(`[END] set estimate successful! ${html_url}`)
-          return fetch(`https://api.zenhub.io/v4/reports/release/591dc19e81a6781f839705b9/items/issues?access_token=${ZENHUB_ACCESS_TOKEN_V4}`, {
-                         method: 'POST',
-                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                         body: `add_issues%5B0%5D%5Bissue_number%5D=${number}&add_issues%5B0%5D%5Brepo_id%5D=${REPO_ID}`
-                       })
+          return fetch(`https://api.zenhub.io/v4/reports/release/591dc19e81a6781f839705b9/items/issues?access_token=${ZENHUB_ACCESS_TOKEN_V4}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: `add_issues%5B0%5D%5Bissue_number%5D=${number}&add_issues%5B0%5D%5Brepo_id%5D=${REPO_ID}`
+            })
         })
         .then(() => console.info(`[END] set release successful! ${html_url}`))
         .catch(err => res.json(err))
@@ -68,6 +69,39 @@ module.exports = (app) => {
             })
               .then(() => console.info(`[END] issue closed successful! ${html_url}`))
               .catch(err => res.json('error', { error: err })))
+          res.json({ message: 'Closed issue successful!' })
+        }
+        res.json({ error: 'Not Found!' })
+      })
+      .catch(err => res.json('error', { error: err }))
+  })
+
+  app.post('/reading-note', (req, res) => {
+    const { GITHUB_ACCESS_TOKEN } = req.webtaskContext.secrets
+
+    const title = req.query.title
+    const note = req.body.note
+    console.info('[BEGIN]', { title, note })
+
+    let keyword = encodeURIComponent(title.replace(/\s/g, '+'))
+    console.info('[KEYWORD]', keyword)
+
+    fetch(`https://api.github.com/search/issues?q=${keyword}%20repo:jimmylv/reading%20is:open`)
+      .then(response => response.json())
+      .then(data => {
+        console.info('[RESULT]', data)
+        if (data.total_count > 0) {
+          data.items.forEach(({ url, html_url }) =>
+            fetch(`${url}/comments?access_token=${GITHUB_ACCESS_TOKEN}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                body: `> ${note}`
+              })
+            })
+              .then(() => console.info(`[END] added comment successful! ${html_url}`))
+              .catch(err => res.json('error', { error: err })))
+          res.json({ message: 'Added comment into issue successful!' })
         }
         res.json({ error: 'Not Found!' })
       })
