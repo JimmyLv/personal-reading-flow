@@ -1,6 +1,8 @@
 require('es6-promise').polyfill()
 require('isomorphic-fetch')
 
+const REPO_OWNER = 'jimmylv'
+const REPO_NAME = 'reading'
 const REPO_ID = 91649130
 
 module.exports = (app) => {
@@ -70,8 +72,30 @@ module.exports = (app) => {
               .then(() => console.info(`[END] issue closed successful! ${html_url}`))
               .catch(err => res.json('error', { error: err })))
           res.json({ message: 'Closed issue successful!' })
+        } else {
+          console.info('[RESULT]', data)
+
+          fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?access_token=${GITHUB_ACCESS_TOKEN}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title })
+          })
+            .then(response => response.json())
+            .then(({ url, html_url }) => {
+              console.info(`[END] issue created successful! ${html_url}`)
+              fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  state: 'closed'
+                })
+              })
+                .then(() => console.info(`[END] issue closed successful! ${html_url}`))
+                .catch(err => res.json('error', { error: err }))
+            })
+            .catch(err => res.json('error', { error: err }))
         }
-        res.json({ error: 'Not Found!' })
+        res.json({ error: 'Finished achieve reading item!' })
       })
       .catch(err => res.json('error', { error: err }))
   })
