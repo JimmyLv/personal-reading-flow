@@ -8,12 +8,12 @@ const REPO_ID = 91649130
 module.exports = (app) => {
   app.post('/reading', (req, res) => {
     const { GITHUB_ACCESS_TOKEN, ZENHUB_ACCESS_TOKEN, ZENHUB_ACCESS_TOKEN_V4 } = req.webtaskContext.secrets
-    const payload = JSON.parse(req.body.payload)
-    const { url, html_url, number } = payload.issue
+    const { action, issue } = JSON.parse(req.body.payload)
+    const { url, html_url, number } = issue
 
-    console.info(`[BEGIN] issue updated with action: ${payload.action}`)
+    console.info(`[BEGIN] issue updated with action: ${action}`)
 
-    if (payload.action === 'opened') {
+    if (action === 'opened') {
       fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -23,7 +23,7 @@ module.exports = (app) => {
       })
         .then(() => console.info(`[END] set milestone successful! ${html_url}`))
         .catch(err => res.json(err))
-    } else if (payload.action === 'milestoned') {
+    } else if (action === 'milestoned') {
       fetch(`https://api.zenhub.io/p1/repositories/${REPO_ID}/issues/${number}/estimate?access_token=${ZENHUB_ACCESS_TOKEN}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
