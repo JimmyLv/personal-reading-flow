@@ -17,9 +17,7 @@ module.exports = (app) => {
       fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          milestone: 1
-        })
+        body: JSON.stringify({ milestone: 1, }),
       })
         .then(() => console.info(`[END] set milestone successful! ${html_url}`))
         .catch(err => res.json(err))
@@ -27,9 +25,7 @@ module.exports = (app) => {
       fetch(`https://api.zenhub.io/p1/repositories/${REPO_ID}/issues/${number}/estimate?access_token=${ZENHUB_ACCESS_TOKEN}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          estimate: 1
-        })
+        body: JSON.stringify({ estimate: 1 }),
       })
         .then(() => {
           console.info(`[END] set estimate successful! ${html_url}`)
@@ -37,7 +33,7 @@ module.exports = (app) => {
             {
               method: 'POST',
               headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-              body: `add_issues%5B0%5D%5Bissue_number%5D=${number}&add_issues%5B0%5D%5Brepo_id%5D=${REPO_ID}`
+              body: `add_issues%5B0%5D%5Bissue_number%5D=${number}&add_issues%5B0%5D%5Brepo_id%5D=${REPO_ID}`,
             })
         })
         .then(() => console.info(`[END] set release successful! ${html_url}`))
@@ -65,9 +61,7 @@ module.exports = (app) => {
             fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                state: 'closed'
-              })
+              body: JSON.stringify({ state: 'closed' }),
             })
               .then(() => console.info(`[END] issue closed successful! ${html_url}`))
               .catch(err => res.json('error', { error: err })))
@@ -78,7 +72,7 @@ module.exports = (app) => {
           fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?access_token=${GITHUB_ACCESS_TOKEN}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title })
+            body: JSON.stringify({ title }),
           })
             .then(response => response.json())
             .then(({ url, html_url }) => {
@@ -86,9 +80,7 @@ module.exports = (app) => {
               fetch(`${url}?access_token=${GITHUB_ACCESS_TOKEN}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  state: 'closed'
-                })
+                body: JSON.stringify({ state: 'closed' }),
               })
                 .then(() => console.info(`[END] issue closed successful! ${html_url}`))
                 .catch(err => res.json('error', { error: err }))
@@ -119,9 +111,7 @@ module.exports = (app) => {
             fetch(`${url}/comments?access_token=${GITHUB_ACCESS_TOKEN}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                body: `> ${note}`
-              })
+              body: JSON.stringify({ body: `> ${note}` }),
             })
               .then(() => console.info(`[END] added comment successful! ${html_url}`))
               .catch(err => res.json('error', { error: err })))
