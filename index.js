@@ -7,7 +7,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 // yet to be created
-app.use(require('./middlewares/db').connectDisconnect)
+// app.use(require('./middlewares/db').connectDisconnect)
 // require('./routes/stories')(app)
 require('./routes/reading')(app)
 
