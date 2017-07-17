@@ -8,7 +8,7 @@ app.use(bodyParser.json())
 
 // yet to be created
 app.use(require('./middlewares/db').connectDisconnect)
-require('./routes/stories')(app)
+// require('./routes/stories')(app)
 require('./routes/reading')(app)
 
 module.exports = Webtask.fromExpress(app)
